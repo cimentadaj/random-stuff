@@ -1,13 +1,22 @@
-
 ## On this script I graph the evolution of GDP spending of education for most Latin American countries and some other
 ## non-Latin American countries.
 ## I did this to learn a little about dplyr and ggvis
 
+
+## install.packages(c("dplyr","ggvis","tidyr"))
 library(dplyr)
 library(ggvis)
 library(tidyr)
 
-latam <- read.csv("/Users/cimentadaj/Downloads/EducacacionLATAM2/EducacionLATAM2.csv", sep = ",")
+## Download the data to your working directory under the name latam.zip
+download.file("http://api.worldbank.org/v2/en/indicator/se.xpd.totl.gd.zs?downloadformat=csv", destfile ="latam.zip",
+            method="curl")
+
+## unzip the file in your working directory
+unzip ("latam.zip", exdir = "./")
+
+## read the csv file with the data and exclude the first 4 lines(which include some titles)
+latam <- read.csv("d9857509-66a3-4142-a005-d0203e1a64e2_v2.csv", sep = ",", skip=4)
 latam2 <- tbl_df(latam)
 
 ## Selecting only the countries I'm interested in
@@ -45,7 +54,7 @@ latam2$Year <- sapply(latam2$Year, paste0,"-01-01")
 
 ## Only gonna use years before 2013, including it.
 latam2 <- latam2[latam2$Year != "2014-01-01" & latam2$Year != "2015-01-01" &
-                !is.na(latam2$Spending) & latam2$Country.Name != "Dominican Republic",]
+                     !is.na(latam2$Spending) & latam2$Country.Name != "Dominican Republic",]
 ## I'm specifically interested in the Dominican data, however the data here is incomplete.
 
 
@@ -146,7 +155,7 @@ latam3 <- filter(latam3, Country.Name %in% c("Argentina",
                                              "Denmark",
                                              "United States",
                                              "Singapore"
-                                             ))
+))
 
 # Convert country names to factors.
 latam3$Country.Name <- factor(latam3$Country.Name)
@@ -225,5 +234,4 @@ latam3 %>%
     layer_text(text:=~Country.Name2, fontSize:=12) %>%
     hide_legend(c("stroke","strokeDash"))
 
-
-
+## end of script
