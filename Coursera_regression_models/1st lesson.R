@@ -50,7 +50,14 @@ myPlot<-function(beta){
 ## After you plot this, you will get a scatter plot with all the data points.
 ## Also you will get a regression line that will vary according to your beta.
 
+## Remember what the MSE is. Mean Squared Errors is simply the difference of each data points from a summarizing line
+## Naturally, if it's a high number it means that the difference between each data point and the summarizing line is big.
+## Which is why MSE is main criteria to see if a line actually fits the data better. If you have two lines, the one with 
+## the lowest MSE will always explain the data better.
 
 manipulate(myPlot(beta),beta=slider(0.01,1.2,step=0.02))
 ## You'll get the plot with a beta slider. Note that the beta argument is passed
 ## to the slider. 
+
+## This is a great example on which you can see which is the best slope. If you play around, you'll see that there is a slope
+## that captures the LEAST MSE. That is the slope of the line.
