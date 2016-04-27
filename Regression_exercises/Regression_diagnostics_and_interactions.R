@@ -15,7 +15,7 @@ plot(hall.fame$games, fit$residuals) ## As the number of games increase
 ## the number residuals became larger.
 
 
-fit2 <- lm(HR ~ games, data= hall)
+fit2 <- lm(HR ~ games, data= hall.fame)
 plot(fit2$fitted.values, fit2$residuals) ## So it's not because of the outliers
 
 ## Perhaps it's nonlinearities
@@ -40,13 +40,13 @@ fit6 <- lm(logHR ~ games + I(games^2), data= hall.fame)
 plot(fit6$fitted.values, fit6$residuals) # There you go
 
 
-fit6 <- lm(logHR ~ games + I(games^2), data= hall.fame)
-
-attach(hall.fame)
-plot(games,logHR)
-
-fit7 <- lm(logHR ~ games + I(games^2) + Hall.Fame.Membership + games:Hall.Fame.Membership)
-plot(fit7$fitted.values, fit7$residuals) # There you go
+fit7 <- lm(logHR ~ games + I(games^2) + Hall.Fame.Membership + games:Hall.Fame.Membership, hall.fame) ## Let's look at interactions
+plot(fit7$fitted.values, fit7$residuals)
 
 install.packages("effects")
 library(effects)
+
+plot(effect("games:Hall.Fame.Membership", fit7,, list(games=c(958,1282,1652,3562))), multiline=TRUE, ylim = c(1.5,7))
+
+## check out the effect command. Here you're saying visualize the interaction games:Hall.Fame.Membership for the values of
+## 958, 1282, 1652, 3562 of games with the lines superimposed(with the multiline command)
