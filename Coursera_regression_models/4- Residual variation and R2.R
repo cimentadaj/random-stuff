@@ -78,3 +78,14 @@ Tot.var <- sum((diamond$price-mean(diamond$price))^2) ## Total sum of the varian
 Resi.var <- sum(fit$residuals^2) ## Total sum of squared residuals(aka, unexplained variance)
 
 Expl.var <- (Tot.var - Resi.var)/ Tot.var ## Explained var divided by the Total var
+
+
+## Sometimes, when you're models with ANOVA, you need to make sure your residuals are normally distributed(in order for the F
+## test to be valid). It could be that the F test is significant, telling to keep the additional variables but
+## that's in fact wrong because your residuals are not normally distributed
+
+## here is a way of checing residual normality
+shapiro.test(fit$residuals)
+
+## the 0.9329 value means that it fails to reject normality. If it would've been significant, it would have been
+## rejecting that the residuals are normality distributed.
