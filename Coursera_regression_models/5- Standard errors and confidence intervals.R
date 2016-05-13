@@ -25,9 +25,7 @@ seBeta1<-sigma/sqrt(ssx)
 ## The denominator is the square root if the squared deviations.
 
 ## From a substantive point of view, the SE is simply diving how much our unexplained varies by how much the predictor
-## varies relative to the mean. The lower the residual variance and the higher the predictor variance,
-## the more precise the estimate(this is counter intuitive but since you are squaring the predictor variance
-## the higher, the lower will be the square).
+## varies relative to the mean. Standard error is the standard deviation of an estimated coefficient.
 
 # The t statistic
 tBeta0<-beta0/seBeta0;  tBeta1<-beta1/seBeta1
