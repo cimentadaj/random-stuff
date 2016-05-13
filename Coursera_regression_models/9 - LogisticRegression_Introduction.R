@@ -37,6 +37,10 @@ exp(logRegRavens$coefficients)
 
 exp(confint(logRegRavens))
 
+## How would interpret this? Well, we are 95% confident the interval is between 0.99 and 1.30
+## This means that is some instances the odds for a score increase are positive
+## whereas in some others it decreases.
+
 ## You can use ANOVA just as in OLS and compare nested models.
 logRegRavens2<-glm(ravensData$ravenWinNum~ravensData$ravenScore + ravensData$ravenWin ,family="binomial")
 anova(logRegRavens, logRegRavens2, test = "Chisq")
