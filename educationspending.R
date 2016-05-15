@@ -16,7 +16,9 @@ download.file("http://api.worldbank.org/v2/en/indicator/se.xpd.totl.gd.zs?downlo
 unzip ("latam.zip", exdir = "./")
 
 ## read the csv file with the data and exclude the first 4 lines(which include some titles)
-latam <- read.csv("d9857509-66a3-4142-a005-d0203e1a64e2_v2.csv", sep = ",", skip=4)
+## be careful as when the World Bank updates these files the normally change or alter
+## the names. Be sure to try the three different csvs until you get the correct one.
+latam <- read.csv("API_SE.XPD.TOTL.GD.ZS_DS2_en_csv_v2.csv", sep = ",", skip=4)
 latam2 <- tbl_df(latam)
 
 ## Selecting only the countries I'm interested in
