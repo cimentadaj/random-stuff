@@ -63,10 +63,12 @@ abline(a = fit[1]+fit[3], b=fit[2], col="blue")
 
 fit <- lm(Fertility ~ Agriculture*factor(catho), swiss)
 summary(fit)$coef
-## The intercept is the intercept for the dummy 0
-## The slope for agriculture is now the slope for the 0 category, which is protestant
-## The intercept for the 1 category is the intercept + the main effect of the factor variable
-## The slope for the 1st category is the slope of 0(Agriculture) + the coef in the interaction term
+
+# first: factor(catho) == 0 - Protestant and 1 - Catholic
+## The intercept is the intercept for the factor(catho) == 0 -- Protestan in this case
+## The slope for Agriculture is now the slope for the factor(catho) == 0 category, which is protestant
+## The intercept for the factor(catho) == 1 category is the intercept + the main effect of the factor variable == 67.68 + (-14.8500)
+## The slope for the factor(catho) == 1 is the slope of 0(Agriculture) + the coef in the interaction term == -0.0056 + 0.3698
 
 ## Let's see how their slope varies
 
