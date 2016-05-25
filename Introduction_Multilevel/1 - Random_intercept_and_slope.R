@@ -12,7 +12,7 @@ dim(politeness)
 str(politeness)
 ## So the variable subject specifices each respondent(which were followed up longitudinally so their responses are not independent)
 ## Additionally, each respondent was assigned a specific scenario on which to have an attitude. So, for example, 
-## subject F1 was assigned scenario 1 in some instances and scenario 2 in other instances, interviews are nested into subject
+## subject F1 was assigned scenario 1 in some instances and scenario 2 in other instances, interviews are nested into subjects
 ## and subjects are nested into scenarios
 
 which(is.na(politeness$frequency))
@@ -20,7 +20,7 @@ which(is.na(politeness$frequency))
 
 # The difference in politeness level is represented in the column called “attitude”.
 # In that column, “pol” stands for polite and “inf” for informal. Sex is represented
-# as “F” and “M” in the column “gender”. The dependent measure is “frequency”,
+# as “M” and “F”. The dependent measure is “frequency”,
 # which is the voice pitch measured in Hertz (Hz). To remind you, higher values
 # mean higher pitch.
 
@@ -36,19 +36,19 @@ display(politeness.model)
 
 ## First, the coefficients.
 ## Attitudepol is a dummy in which 1 == polite and 0 == informal
-## The intercept here is the average frequency for subject in which attitud pol is 0(informal)
+## The intercept here is the average frequency for subjects in which attitud pol is 0(informal)
 ## attitudepol is then the average frequency difference between polite and informal.
-## so subjects assigned to polite scenarios were -19.38 less frequent than informal.
+## so subjects assigned to polite scenarios had -19.38 less frequenncy than informal.
 
 ## You can also interpret this as looking at the difference between polite and informal controlling for subject
 
 ## Second, the error terms.
-## The subject(intercept) standard deviation is how much each subject mean frequency varies per subject.
+## The subject(intercept) standard deviation is how much each subjects mean frequency varies per subject.
 sd(ranef(politeness.model)[[1]][,1])
 ## Confirm it yourself
 ## In other words, because subjects are our second level variable, this is the BETWEEN subject variability.
 
-## The residual is the left over unexplained variation, which if it nos between subject, it MUST to be the within subject.
+## The residual is the left over unexplained variation, which if it not the between subject, it MUST to be the within subject.
 ## So now we have the within and between subject variability.
 
 ## You can also interpret it as this:
@@ -76,7 +76,7 @@ display(politeness.model)
 # to have meaningful intercepts.
 
 ranef(politeness.model) ## As you can see, some scenarios have low or higher mean frequency as well as the subject.
-
+coef(politeness.model)
 ## One question though: are these scenarion and subject deviances for when scenario and subject equal informal attitude or
 ## for the overall mean scenario or mean subject.
 # I have a hunch that it is from the mean scenario when informal attitude, because otherwise it doesn't make much sense
@@ -98,7 +98,7 @@ display(politeness.model)
 # The intercept is the mean frequency for informal attitude and women: 256.85
 # attitudepol is the difference for formal attitude. So formal women have 256.85-19.72= 237
 # genderM is the difference between men and informal women. So informal men have a mean frequency of 256.85-108.52=148
-# Finally, since we have mean frequency of informal men, we simply subtract the formal factor 148-19.72=128
+# Finally, since we have mean frequency of informal men, we simply subtract the formal constant= 148-19.72=128
 
 ## Random effects of model without gender
 # Error terms:
@@ -107,11 +107,14 @@ display(politeness.model)
 # subject  (Intercept)     63.36  
 # Residual                 25.42
 
+display(politeness.model)
 # Let's compare random effects of both models.
 # The scenario intercept variation changed insignificantly.
 # The subject variance decreased SUBSTANTIALLY when gender is included, meaning that most of the between subject variance
 # was due to gender differences
 # Finally, the residual variance is virtually unchanged when adding gender
+
+
 
 # Let's cover the analogous procedure of the F test in multilevel.
 # Similar to the lm function, here you use the anova() function but it differs in the procedure in which
