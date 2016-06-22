@@ -99,7 +99,7 @@ predict(model, type="response") ## this is not working, I don't know why.
 ## e.g., 
 tapply(crab$Sa, crab$W,function(x)c(mean=mean(x),variance=var(x)), simplify=F)
 
-# Similar to the logistic regression, you can't violate the assumption of overdispersion.
+# Similar to the logistic regression, you can violate the assumption of overdispersion.
 # overdispersion simply means that although you might have crabs with similar weight, they are quite different
 # in the number of male crabs they have.
 model.disp=glm(crab$Sa~crab$W, family=quasipoisson(link=log), data=crab)
