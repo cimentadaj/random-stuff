@@ -1,3 +1,4 @@
+
 install.packages("xlsx")
 
 library (survey)
@@ -89,7 +90,7 @@ sd(money)
 # The higher the variance(std dev) the wider the 95% range.
 # If you increase your sample, the std. dv will always be smaller and thus your CI as well.
 
-
+# https://www.dropbox.com/sh/nw8rb6juql8pk61/AAB_hSp8osTcOPXjWOREZzk_a/Faculty%20With%20Salary.xlsx?dl=0
 faculty <- read.xlsx("Faculty With Salary.xlsx", sheetIndex = 1)
 names(faculty)[5] <- "Salary"
 names(faculty)[1] <- "ID"
