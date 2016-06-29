@@ -1,7 +1,5 @@
-
 install.packages("xlsx")
 
-library (survey)
 library(foreign)
 library(RCurl)
 library(xlsx)
@@ -90,7 +88,7 @@ sd(money)
 # The higher the variance(std dev) the wider the 95% range.
 # If you increase your sample, the std. dv will always be smaller and thus your CI as well.
 
-# https://www.dropbox.com/sh/nw8rb6juql8pk61/AAB_hSp8osTcOPXjWOREZzk_a/Faculty%20With%20Salary.xlsx?dl=0
+# Second handout
 faculty <- read.xlsx("Faculty With Salary.xlsx", sheetIndex = 1)
 names(faculty)[5] <- "Salary"
 names(faculty)[1] <- "ID"
@@ -108,6 +106,41 @@ var(faculty_srs$Salary)
 ((1 - 20/370)/370) * var(faculty_srs$Salary) # Sample mean variability
 
 sqrt(((1 - 20/370)/370) * var(faculty_srs$Salary)) # Standard error of the mean
+
+# Third handout
+library(haven)
+library(survey)
+ip_dataset <- read_dta("https://www.dropbox.com/sh/nw8rb6juql8pk61/AACLVBAd6hqqPHW4fOK5GeTMa/a_indresp_ip.dta")
+ip_dataset[] <- lapply(ip_dataset, unclass)
+ip_dataset <- ip_dataset[ip_dataset$a_jbhrs >= 0,]
+
+ip_survey <- svydesign(id=~1, strata=~a_strata, data=ip_dataset )
+
+# Now estimate the mean and variance for the number hours worked per week (a_jbhrs) and age (a_dvage),
+# first for an SRS design (the Stata default estimate) and accounting for the stratification (using svyset). 
+
+## Mean and variance for the number of hours worked per week
+## Assuming SRS
+mean(ip_dataset$a_jbhrs) # Match stata
+var(ip_dataset$a_jbhrs) # Match stata
+
+## Assuming stratified sampling
+svymean(~a_jbhrs, ip_survey) ## Match stata
+svyvar(~a_jbhrs, ip_survey) ## Match stata
+
+## Mean and variance for age
+## Assuming SRS
+mean(ip_dataset$a_dvage) ## Match stata
+var(ip_dataset$a_dvage) ## Match stata
+
+## Assuming stratified sampling
+svymean(~a_dvage, ip_survey) ## Match stata
+svyvar(~a_dvage, ip_survey) ## Match stata
+
+
+## Design effect
+svyvar(~a_dvage, ip_survey)[1]/var(ip_dataset$a_dvage)
+svyvar(~a_jbhrs, ip_survey)[1]/var(ip_dataset$a_jbhrs)
 
 
 ######
