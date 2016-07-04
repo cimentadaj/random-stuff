@@ -1,5 +1,6 @@
 # install.packages("xlsx")
 
+
 library(foreign)
 library(RCurl)
 library(xlsx)
@@ -137,6 +138,150 @@ var(ip_dataset$a_dvage) ## Match stata
 svymean(~a_dvage, ip_survey) ## Match stata
 svyvar(~a_dvage, ip_survey) ## Match stata
 
+
+## Design effect
+svyvar(~a_dvage, ip_survey)[1]/var(ip_dataset$a_dvage)
+svyvar(~a_jbhrs, ip_survey)[1]/var(ip_dataset$a_jbhrs)
+
+## Cluster sampling
+# Problems with cluster sampling: the units inside a cluster might be correlated due to the shared environment
+# or simply unobserved personal characteristics
+
+# Strata vs clustering
+# When you pick stratas, you sample EACH strata. With the clusters you sample an X number of clusters.
+# NOTE: I SAID BEFORE THAT YOU NORMALLY SAMPLE ALL ELEMENTS WITHIN A CLUSTER BUT IN PRACTICE THAT NEVER HAPPENS.
+# THE REASONS WHY CLUSTERS ARE DIFFERENT FROM STRATA ARE OUTLINED HERE.
+# Strata is used for BROAD categories like men and women, age categories, regions, whereas clusters
+# are smaller units like schools, neighborhoods, faculties in a university.
+# Lastly, you pick strata because you have prior information on the stratas(number of people in the strata
+# and overall population number) whereas for the clustering you don't have any prior information
+# on the clusters.
+
+# Clusters are called primary sampling units or PSU's. In the survey package it's the id argument.
+# IF there's an EPSEM design(equal probabilities) you DON'T have to use weights. Think it through,
+# if everyone has the same probability of being picked, by chance, you'll get a representative sample
+# of the population and there's no need to weight.
+
+# The mose important thing in sampling design is how it affects our variance. 
+# Some designs will give more precision, and the CI's will be smaller, with the SE's.
+# The key take away is how the sampling desing reduces our variance.
+
+# You can easily calculate the design effects for cluster sampling as well. The division
+# would be the variance of the mean of the overall cluster divided by the variance of a simple
+# random sample.
+
+# NOTE: All these variances will differ for different dependent variables. You should pick
+# your prefered DV or try several important DV's for all researchers.
+
+# The cluster sample is really dependent on the sampling frame. If you want to cluster
+# university departments(sociology, political science, etc..) and you have a list
+# of all students inside the department, then you could do a simple random sample
+# but it would be better to do a stratified sampling because you could get a REPRESENTATIVE
+# sample of ALL departments instead of a couple clusters(departments).
+
+# So whenver you do cluster samplingm, it is because you don't have a good sampling frame
+# the ideal thing would be to sample ALL elements within a cluster but in the case
+# where you don't have a good sampling frame, you'll need to do a non-probability
+# design within each cluster.
+
+# A two-stage cluster design is basically doing a SRS within a cluster
+# rather than interviewing everyone withint the cluster(one-stage cluster design)
+# However, you do an SRS because you have a sampling frame with all elements, 
+# which means you don't have to use weights. But if there's another sampling design
+# you might need to use weights inside each cluster.
+
+# All design weights are the inverse of the probability of being picked
+# Example: imagine you ahve a probability of picking a strata of 1/2(50%)
+# and then inside each cluster you have a probability of being picked of 1/7(14%),
+# then your overall probability of being picked is 1/(1/2*1/7).
+# The 1/2*1/7 simply gives the probability which is 0.07 and the inverse is 
+# 1/0.07 which is about 14.
+
+# Non-response weights are the inverse of the probability of response
+
+# https://onlinecourses.science.psu.edu/stat506/node/23
+
+
+## 
+# Systematic sampling
+# It is a way of picking elements into a sample. The way to do it is by picking a systematic pattern
+# of sampling the unit(most of the patterns are just to pick an element every k elements). So,
+# an example where k is 3. Pick element 1, pick element 4, pick element 7, etc..
+
+# Probability Proportional to Size Sampling (PSS)
+# Select first stage units(within a cluster, for example) with
+# probabilities proportional to the size of the cluster.
+# Naturally, the probability per unit will differ
+# per cluster and stage(obviously if stratas have different
+# probabilities of selection)
+
+
+# Fourth handout
+## First question
+faculty <- read.xlsx("Faculty With Salary.xlsx", sheetIndex = 1)
+names(faculty)[5] <- "Salary"
+names(faculty)[1] <- "ID"
+faculty$NA. <- NULL
+
+set.seed(1)
+anyDuplicated(faculty$ID) # No duplicates
+faculty_srs <- faculty[sample(1:370, 20), ]
+
+## 2nd question onwards
+library(haven)
+library(survey)
+ip_dataset <- read_dta("https://www.dropbox.com/sh/nw8rb6juql8pk61/AACLVBAd6hqqPHW4fOK5GeTMa/a_indresp_ip.dta")
+ip_dataset[] <- lapply(ip_dataset, unclass)
+ip_dataset <- ip_dataset[ip_dataset$a_jbhrs >= 0,]
+
+## Survey design with cluster and strata variables
+ip_survey <- svydesign(id=~a_psu, strata=~a_strata, data=ip_dataset )
+
+# Now estimate the mean and variance for the number hours worked per week (a_jbhrs) and age (a_dvage),
+# first for an SRS design (the Stata default estimate) and accounting for the stratification (using svyset). 
+
+## Mean and variance for the number of hours worked per week
+## Assuming SRS
+mean(ip_dataset$a_jbhrs) # Match stata
+var(ip_dataset$a_jbhrs) # Match stata
+
+## Assuming stratified clustered sampling
+svymean(~a_jbhrs, ip_survey) ## Match stata
+svyvar(~a_jbhrs, ip_survey) ## Match stata
+
+## Mean and variance for age
+## Assuming SRS
+mean(ip_dataset$a_dvage) ## Match stata
+var(ip_dataset$a_dvage) ## Match stata
+
+## Assuming stratified clustered sampling
+svymean(~a_dvage, ip_survey) ## Match stata
+svyvar(~a_dvage, ip_survey) ## Match stata
+
+## Design effect
+svyvar(~a_dvage, ip_survey)[1]/var(ip_dataset$a_dvage)
+svyvar(~a_jbhrs, ip_survey)[1]/var(ip_dataset$a_jbhrs)
+
+## Survey design with cluster, strata and weight variables
+ip_survey <- svydesign(id=~a_psu, strata=~a_strata, weights=~a_psnenip_xd, data=ip_dataset )
+
+## Mean and variance for the number of hours worked per week
+## Assuming SRS
+mean(ip_dataset$a_jbhrs) # Match stata
+var(ip_dataset$a_jbhrs) # Match stata
+
+## Assuming stratified clustered sampling with weights
+svymean(~a_jbhrs, ip_survey) ## Match stata
+svyvar(~a_jbhrs, ip_survey) ## Match stata
+
+## Mean and variance for age
+## Assuming SRS
+mean(ip_dataset$a_dvage) ## Match stata
+var(ip_dataset$a_dvage) ## Match stata
+
+## Assuming stratified clustered sampling with weights
+svymean(~a_dvage, ip_survey) ## Match stata
+svyvar(~a_dvage, ip_survey) ## Match stata
 
 ## Design effect
 svyvar(~a_dvage, ip_survey)[1]/var(ip_dataset$a_dvage)
