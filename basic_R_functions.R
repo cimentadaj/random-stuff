@@ -1,6 +1,3 @@
-## On this script I give brief examples on the functionalities of the basic R functions presented here:
-## http://adv-r.had.co.nz/Vocabulary.html
-
 
 ## xor will always give a TRUE with one of the two arguments is TRUE and the other is FALSE.
 xor(1,0)
@@ -141,3 +138,79 @@ for (i in rnorm(100, -50:50)) { ## For negative numbers it's different.
 ## Floor takes the number and rounds up to the highest number BELOW the current number.
 ## So for the first example, it was -50.63. The highest number BELOW -50.63 is -51 whereas
 ## trunc() rounds up to the closest to 0 which would be 50
+
+# prod
+prod(5,4)
+prod(5,5)
+# It's the same as the * operator
+
+# pmin and pmax:
+# takes two vector arguments and compares each position to get either the min or the max
+# pmax stands for parallel max
+exam1 <- sample(50:100,50) # Students take exam1
+exam2 <- sample(50:100,50) # Students take exam2
+pmax(exam1, exam2) # This will give the highest score of both tests for each student
+pmin(exam1, exam2) # Similarly, this will give the smaller number
+
+# rle()
+# rle stands for "Run Length Encoding". Basically, rle is a cumulative cout of consecutive
+# occurrences. If I have vector c(T,T,F,T,T,F,F), rle will throw 2,1,2,2, so the first number
+# is repeated twice, the third number only once and so on..
+# Let's confirm it!
+rle(c(T,T,F,T,T,F,F)) # There you go: 2,1,2,2 with its respective values
+# The usefulness of this function is when wanting to record streaks, like coin flips
+# or in longitudinal data.
+
+# Suppose they asked someone if they were following the elections each year
+(x <- rle(c(T,T,T,T,T,F,F,T,F,T))) # We might conclude that the first 5 years were pretty active because
+# the person had a streak of 5 TRUES
+str(x)
+tapply(x$lengths, x$values,max) # The highest TRUE streak was of 5 and 2 for false.
+
+# missing()
+# This function is pretty simple: it tests whether the argument of a function
+# is missing.
+
+meantwo <- function(x,y) {
+    if(missing(y)) return(x)
+}
+meantwo(5)
+# If we tried is.na instead, it wouldn't have worke.d
+meantwo <- function(x,y) {
+    if(is.na(y)) return(x)
+}
+meantwo(5)
+
+# on.exit()
+# on.exit() purpose is to reset some options or parameter, normally within a function, regardless
+# if there was an error or not. This is useful when attempting risky behaviour (http://stackoverflow.com/questions/28300713/how-and-when-should-i-use-on-exit)
+# or when setting graphical parameters.
+
+# This function will produce an error. See that I set par to be different from the baseline. 
+# Regardless of the possibility of an error, on.exit() will set the parameter back to the 
+plot_with_big_margins <- function(...) {
+    old_pars <- par("mfrow","mar") # Save old parameters
+    on.exit(par(old_pars)) # On exit, reset these parameters
+    
+    par(mar= c(10,9,9,7)) # Change parameters
+    plot(...) # Plot
+}
+
+plot_with_big_margins(with(cars, speed, dist))
+with(cars, plot(speed, dist))
+
+## Let's throw in an error
+plot_with_big_margins <- function(...) {
+    old_pars <- par("mfrow","mar") # Save old parameters
+    on.exit(par(old_pars)) # On exit, reset these parameters
+    
+    par(mar= c(10,9,9,7)) # Change parameters
+    print(par()$mar)# confirm parameters changed
+    plot(s) # Error
+}
+
+plot_with_big_margins(with(cars, speed, dist)) # Error, but the parameters changed before the error
+with(cars, plot(speed, dist)) # Parameters were restored even if there's an error
+
+# on.exit() is usually applied for changing directories, changing graphical parameters, database connections,
+# file connections.
