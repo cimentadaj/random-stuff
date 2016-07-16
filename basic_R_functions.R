@@ -214,3 +214,25 @@ with(cars, plot(speed, dist)) # Parameters were restored even if there's an erro
 
 # on.exit() is usually applied for changing directories, changing graphical parameters, database connections,
 # file connections.
+
+# invisible()
+f1 <- function(x) x
+f2 <- function(x) invisible(x)
+f1(1)  # prints
+f2(1)  # does not
+# But if you save the function to an object name and call it, it will print the 1.
+
+# which()
+# which() outputs the position number in a vector of observations that meets a logical condition
+x <- rep(c(F,T), each=10)
+which(x) # Position of all the TRUE's
+which(x == F) # Position of all the FALSE's
+which(x < 1) # Also with numbers
+
+# diag()
+# the diag function creates a matrix and fills the diagonal with the values specified in
+# x
+
+diag(5) # If you don't specify the nrow and ncol the function assigns 5 rows and 5 columns with a 1 as a diagonal
+diag(1:2) # If length is > 1 it automatically sets nrow and ncol to length of vector and assigns the vector as the diagonal
+diag(1:10, 3,4) # If the vector is longer than the dimensions, the matrix cuts the vector
