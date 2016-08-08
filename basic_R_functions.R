@@ -236,3 +236,24 @@ which(x < 1) # Also with numbers
 diag(5) # If you don't specify the nrow and ncol the function assigns 5 rows and 5 columns with a 1 as a diagonal
 diag(1:2) # If length is > 1 it automatically sets nrow and ncol to length of vector and assigns the vector as the diagonal
 diag(1:10, 3,4) # If the vector is longer than the dimensions, the matrix cuts the vector
+
+# sweep()
+# Sweeps applies an operation over columns or rows
+A <- matrix(1:4,2,2)
+sweep(A, 2,2,"-") # it subtracts the number 2 from each column
+A <- matrix(1:10,2,5)
+# You can also apply different things to different columns(this is the difference between apply and sweep)
+sweep(A, 2, c(0.5,0.6,0.7,1,3), "+")
+# each column is added each of the numbers
+
+# rep_len()
+# rep_len is a faster way of using rep(). It takes two arguments: the vector and the length. The function will repeat until
+# reaches the length
+rep_len(c(1,2,3),10)
+
+#seq_len()
+# This function simply creates a sequence from 1 to the specified length.
+seq_len(10)
+seq_len(20)
+# I don't see the use; simply use the semi colon
+1:10
