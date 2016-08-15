@@ -257,3 +257,9 @@ seq_len(10)
 seq_len(20)
 # I don't see the use; simply use the semi colon
 1:10
+
+#seq_along()
+# This function will output a sequence of the length of the vector(regardless of the number inside)
+seq_along(c(5,6,2) # will output 1:3
+seq_along(rnorm(5)) # will output 1:5
+seq_along(100) # will be the same as seq_len(1)
