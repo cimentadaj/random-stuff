@@ -263,3 +263,17 @@ seq_len(20)
 seq_along(c(5,6,2) # will output 1:3
 seq_along(rnorm(5)) # will output 1:5
 seq_along(100) # will be the same as seq_len(1)
+
+# choose()
+# calculates n! / (( n - r)! * r!).
+# I know this might be a little tricky but let's try to go over it.
+
+# This can be read as the factorial of n! divided by the factorial of the difference of n and r
+# multiplied by the factorial of r!.
+
+choose(10,5) # 10 is n and 5 is r
+
+# Let's calculate it ourselves
+prod(1:10) / (( prod(1:(10 - 5))) * prod(1:5))
+
+# same result
