@@ -1,6 +1,5 @@
 # install.packages("xlsx")
 
-
 library(foreign)
 library(RCurl)
 library(xlsx)
@@ -291,11 +290,21 @@ svyvar(~a_jbhrs, ip_survey)[1]/var(ip_dataset$a_jbhrs)
 ######
 # Survey package
 
+## Sampling error occurs when you've surveyed a sample which will give population estimates different
+## than if you would've surveyed the whole population. Any SAMPLE will have sampling error. 
+## It's different if you're dealing with register data(DK,SWE) because that's the population.
+
 data(api)
 srs_design <- svydesign(id=~1, fpc=~fpc, data=apisrs)
-svytotal(~enroll, srs_design) # SRS=Simple random sample
+svytotal(~enroll, srs_design) # SRS= Simple Random Sample
 svymean(~enroll, srs_design)
+## The same as:
+sum(apisrs$enroll * unique(apisrs$fpc))/ (unique(apisrs$fpc) * 200)
+## The formula is every value of Y multiplied by the sampling weight divided by the sampling weight
+## multiplied by the number of observations
 
+## If some people have different probabilities of getting picked, then you simply multiply
+## the weights of each person by their Y values and divide that by the sum of ALL weights.
 
 srs_design <- svydesign(id=~1, weights = ~pw, data=apisrs)
 svytotal(~enroll, srs_design)
