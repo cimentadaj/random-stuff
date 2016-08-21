@@ -11,7 +11,7 @@ unlink(temp)
 analfabeto <- read.csv("analfabeto-provincia.csv", skip=4, nrow=33, stringsAsFactors = F)[-1,c("X.1","Total","Hombre","Mujer")]
 names(analfabeto)[1] <- c("Province") ## Make sure all columns are identifiable
 
-## The goal is to estimate how big is a gap for each province, regardless of wether women or men are higher.
+## The goal is to estimate how big is a gap for each province, regardless of whether women or men are higher.
 analfabeto$gender_gap_analfa <- round((abs(analfabeto$Hombre - analfabeto$Mujer)/analfabeto$Total) * 100,1)
 analfabeto[order(analfabeto$gender_gap_analfa), ]
 ## This will work as a rank. The higher the worst.
