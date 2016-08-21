@@ -1,3 +1,5 @@
+## This code is to reproduce the graphs in the PDF presentations
+
 setwd("/Users/ggmhf/Desktop/Teaching/Multilevel Short Course")
 
 set.seed(999)
