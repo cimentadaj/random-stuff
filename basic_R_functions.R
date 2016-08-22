@@ -277,3 +277,9 @@ choose(10,5) # 10 is n and 5 is r
 prod(1:10) / (( prod(1:(10 - 5))) * prod(1:5))
 
 # same result
+
+# factorial()
+# as the name says, factorial calculate the factorial of a number.
+# For 5, it's 1 * 2 * 3 * 4 * 5
+factorial(5)
+prod(1:5) # the same result
