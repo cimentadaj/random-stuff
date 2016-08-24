@@ -283,3 +283,19 @@ prod(1:10) / (( prod(1:(10 - 5))) * prod(1:5))
 # For 5, it's 1 * 2 * 3 * 4 * 5
 factorial(5)
 prod(1:5) # the same result
+
+
+# combn
+# It generates all the possible combinations of elements in a vector
+df <- c(3,6,8)
+combn(df,2) # it combines all numbers in all possible ways
+# The df arg is the vector and the 2 argument is the combinations should be in pais
+
+# with a bigger vector, the function can generate all possible three combinations
+combn(1:9,3)
+
+# For what would this be useful? To generate combinations and then, apply a function to it
+# For example, suppose you have a vector of stock market bonds and you'd like to multiply each
+# pair
+combn(rnorm(10), 2, prod) # there you go
+# you can also create an anonymous function
