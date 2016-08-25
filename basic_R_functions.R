@@ -299,3 +299,22 @@ combn(1:9,3)
 # pair
 combn(rnorm(10), 2, prod) # there you go
 # you can also create an anonymous function
+
+# unlist
+# as the name says, this function unlists a list by simplifying it to a vector
+l <- rep(list(data.frame(a=1:5,b=5:9)),5) #  list with 5 data frames
+# what happens if we unlist it? it coerces the dataframes into vector@
+unlist(l)
+# each column of each data frame is combined into a single vector
+
+l2 <- rep(list(1:5),5) # list with 5 vectors
+# what happens? the same. each list element is combined into one single vector
+unlist(l2)
+
+l3 <- rep(list(list()),5)
+unlist(l3)
+
+# What happens if each list object has a different class?
+l.ex <- list(a = list(1:5, LETTERS[1:5]), b = "Z", c = NA)
+# everything is coerced into a character vector
+unlist(l.ex) #note that it retains the names and indices of each number. You can drop that with the use.names arg
