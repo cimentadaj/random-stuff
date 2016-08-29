@@ -318,3 +318,19 @@ unlist(l3)
 l.ex <- list(a = list(1:5, LETTERS[1:5]), b = "Z", c = NA)
 # everything is coerced into a character vector
 unlist(l.ex) #note that it retains the names and indices of each number. You can drop that with the use.names arg
+
+
+# split()
+x <- rnorm(100)
+fac <- factor(rep(1:5,length.out=100))
+# splits the data according to a factor
+split(x, fac)
+
+# you could split the data, calculate something and then unsplit back into a vector
+lapply(split(x, fac), mean)
+
+# it can be applied to data frames
+l <- split(mtcars$mpg, factor(mtcars$cyl))
+
+# and then apply something and unsplit        
+unsplit(lapply(l, function(x) (x^2)), factor(mtcars$cyl))
