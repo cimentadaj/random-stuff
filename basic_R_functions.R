@@ -334,3 +334,25 @@ l <- split(mtcars$mpg, factor(mtcars$cyl))
 
 # and then apply something and unsplit        
 unsplit(lapply(l, function(x) (x^2)), factor(mtcars$cyl))
+
+# expand.grid()
+# Generates a combined of all numbers and factors provided. See the example:
+expand.grid(height = seq(60, 80, 5), weight = seq(100, 300, 50),
+            sex = c("Male","Female"))
+
+expand.grid(matrix(1:10,5,5), sex=c("Female","Male"))
+
+# This might be useful if you want to have the same dataset for different factors
+
+expand.grid(x=seq(1,10), y=seq(11,19))
+
+# A useful example is after running a linear model, predicting over a new data
+# set that will have every possible combination
+
+store <- lm(mpg ~ disp + am + carb, data=mtcars)
+predict(store, newdata = expand.grid(disp=unique(mtcars$disp),
+                                     am=unique(mtcars$am),
+                                     carb=unique(mtcars$carb)),
+                                     type = "response")
+# expand.grid() is quite helpful here because it combines all possible
+# numbers, specifically what one wants when predicting for new data
