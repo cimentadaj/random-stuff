@@ -1,4 +1,3 @@
-
 # Analysing Comparative Longitudinal Survey Data Using Multilevel Models
 # RECSM Summer School in Survey Methodology
 # Malcolm Fairbrother
@@ -37,17 +36,20 @@ display(mod1)
 # Each "group" mean is at (0,0) in the scatterplot
 
 # Substantively, this means that there is not group differences or between group variation
-# in the mean for each group.
+# because we are forcing each group mean to be in exactly (0,0).
 
 modW <- plm(log(gsp) ~ log(pcap) + log(pc) + log(emp) + unemp, data = Produc, model="within")
+# This model is controlling for state even though I'm not specifying the state variable
+
 summary(modW)$coef
 # so the pcap coefficient turned from 0.16 to -0.02. When the data is estimated to have
-# no differences between groups(so all "clustered" together into 1 group) the the relationship
+# no differences between groups(so all "clustered" together into 1 group) the relationship
 # between pcap and gsp is negative, so more pcap is associated with less gsp.
 
 # The within model is simply "controlling" for each state dummy, meaning that the model
 # is estimated free from any differences between states
 
+# Compare the past model with this one containing the state variable
 modW2 <- lm(log(gsp) ~ log(pcap) + log(pc) + log(emp) + unemp + as.factor(state), data = Produc)
 summary(modW2)$coef
 # The results are the same for all covariates
@@ -58,7 +60,7 @@ summary(modW2)$coef
 # We can also add dummies for years, making a "two-way fixed effects model":
 modT <- plm(log(gsp) ~ log(pcap) + log(pc) + log(emp) + unemp, data = Produc, effect="twoways")
 summary(modT)$coef
-# Now we "control" for states and years, constraining the variance between groups and years
+# Now we control for states and years, constraining the variance between groups and years
 
 # and in our linear model:
 modT2 <- lm(log(gsp) ~ log(pcap) + log(pc) + log(emp) + unemp + as.factor(year) + as.factor(state), data = Produc)
@@ -67,9 +69,11 @@ display(modT2)
 # now fit a "between" effects model only, using the specialised plm function:
 modB <- plm(log(gsp) ~ log(pcap) + log(pc) + log(emp) + unemp, data = Produc, model="between")
 summary(modB)$coef
+
 # contrast with the "within" models above... what do you see?
-# the within slope is negative, so within each state the more pcap is associated with less gsp
-# However, between states, the higher the pcap the more gsp. This estimation is done by calculating
+# the within slope is negative, so within each state + pcap is associated with - gsp
+# However, between states, the states with higher pcap have also higher gsp.
+# This estimation is done by calculating
 # the average X variable in each group and then estimating a slope out of that. The higher the mean
 # for each group, the higher the mean dependent variable
 
@@ -101,10 +105,22 @@ prod$lempM <- log(prod$empM)
 library(lme4)
 
 # now fit a random effects model only with the group means... what do you see?
-mlmB <-lmer(log(gsp) ~ lpcapM + lpcM + lempM + unempM + (1 | state), data = prod) # fit a random slope
+mlmB <-lmer(log(gsp) ~ lpcapM + lpcM + lempM + unempM + (1 | state), data = prod) # fit a random intercept
 summary(mlmB)$coef
 
-# It's really similar to the between states model
+# It's really similar to the between states model but differs only because the between model
+# computes a weighted average. You can see it as a scatterplot with 5 dots positively linear.
+# Each dot is the mean of a group of dots, think of 6 countries. As each mean of X increases
+# the corresponding value increases. Like the example below:
+
+# Means for each group plotted in Y ~ X
+#   |              %
+#   |           +
+# Y |        @
+#   |     *
+#   |  O
+#    ---------------------
+#             X
 
 prod$lpcap <- log(prod$pcap) # take the log of the original covariates
 prod$lpc <- log(prod$pc)
@@ -121,9 +137,12 @@ prod$unempD <- prod$unemp - prod$unempM
 # fit a random effects model only with the differences variables... what do you see now?
 mlmW <- lmer(log(gsp) ~ lpcapD + lpcD + lempD + unempD + (1 | state), data = prod)
 summary(mlmW)$coef
+
 ## It's the same as the within model. So the within model is regressing the difference of each covariate
 ## from its state mean on the dependent variable. And it's allowing the intercept to vary by group.
 
+# Which would be the same as:
+summary(lm(log(gsp) ~ log(pcap) + log(pc) + log(emp) + unemp + as.factor(state), data=prod))$coef
 
 # and finally fit a model a random effects model with BOTH the between and within components:
 mlmBW <- lmer(log(gsp) ~ lpcapD + lpcD + lempD + unempD + lpcapM + lpcM + lempM + unempM + (1 | state), data = prod)
@@ -133,11 +152,12 @@ summary(mlmBW)$coef
 
 # now compare the U_j's from the RE and FE between models:
 toplot <- cbind(modB$residuals, ranef(mlmB)$state)
-# So the first one is the residuals from a between models and the second one is the difference of each state from
-# the overall mean
+#  The first one is the residuals from a between model and the second one is the difference of
+#  each state intercept from the overall mean intercept, which is simply the weighted
+#  state mean of the log(gsp)
 
 # fit models separately for every state, and extract the coefficient estimates...
-# first, using the differenced variables:
+# first, using the differenced variables, so these would be the within coefs of each state:
 by(prod, prod$state, function(x) lm(log(gsp) ~ lpcapD + lpcD + lempD + unempD, x)$coefficients)
 # the intercept in this case is the value of Y for the mean of every X
 
@@ -146,7 +166,8 @@ by(prod, prod$state, function(x) lm(log(gsp) ~ lpcap + lpc + lemp + unemp, x)$co
 # the intercept is the Y value when each variable is 0
 
 # what's the difference?
-# The intercept. Each variable slope is the same, simply the interpretation of the intercept changes.
+# The intercept. 
+# Each variable slope is the same, simply the interpretation of the intercept changes.
 
 
 # now clear the workspace (or just close R, without saving, and re-open it):
@@ -157,8 +178,9 @@ rm(list=ls())
 # download the file "evs-select.csv" from http://bit.ly/29ntWRx, and 
 # copy it to:
 getwd() # this is where R reads from and writes to, by default (you can use "setwd" to change it)
-
-evs <- read.csv("evs-select.csv") # load the data (may take a moment... it's about 13MB)
+library(RCurl)
+f <- getURL("https://raw.githubusercontent.com/cimentadaj/random-stuff/master/Introduction_Multilevel/Longitudinal-Multilevel-short_course/evs-select.csv")
+evs <- read.csv(text=f) # load the data (may take a moment... it's about 13MB)
 backup <- evs # the name says it all (just avoids having to re-read the dataset if you want to start over)
 
 class(evs) # data frame
@@ -188,15 +210,16 @@ table(evs$wave)
 
 table(evs$cname)
 evs$cname <- factor(evs$cname) # this removes unneeeded/empty categories
-levels(evs$cname)[which(levels(evs$cname)=="Bosnia Herzegovina")] <- "Bosnia and Herzegovina"
-levels(evs$cname)[which(levels(evs$cname)=="USA")] <- "United States"
-levels(evs$cname)[which(levels(evs$cname)=="Northern Ireland")] <- "United Kingdom"
-levels(evs$cname)[which(levels(evs$cname)=="Great Britain")] <- "United Kingdom"
+levels(evs$cname)[levels(evs$cname) %in% "Bosnia Herzegovina"] <- "Bosnia and Herzegovina"
+levels(evs$cname)[levels(evs$cname) %in% "USA"] <- "United States"
+levels(evs$cname)[levels(evs$cname) %in% "Northern Ireland"] <- "United Kingdom"
+levels(evs$cname)[levels(evs$cname) %in% "Great Britain"] <- "United Kingdom"
 evs$cname <- factor(evs$cname)
 table(evs$cname)
 
 table(evs$childfaith)
-evs$childfaith <- ifelse(as.numeric(evs$childfaith) %in% c(1,3,5,6), NA, as.numeric(as.numeric(evs$childfaith)==2))
+evs$childfaith <- ifelse(as.numeric(evs$childfaith) %in% c(1,3,5,6), NA,
+                         as.numeric(as.numeric(evs$childfaith)==2))
 table(evs$childfaith, useNA="always")
 
 evs$godimp <- ifelse(evs$godimp>0, evs$godimp, NA)
@@ -217,7 +240,7 @@ plot(table(evs$age), xlab="Age", ylab="Count") # a simple and easy graphic
 
 # the next part merges this dataset with information about GDP per capita
 
-install.packages("WDI") # the WDI package connects to the World Bank's "World Development Indicators" website
+# install.packages("WDI") # the WDI package connects to the World Bank's "World Development Indicators" website
 
 library(WDI)
 wdi <- WDI(country = "all", indicator = "NY.GDP.PCAP.PP.KD", start = 1981, end = 2014)
@@ -229,7 +252,7 @@ levels(evs$cname)[!levels(evs$cname) %in% levels(wdi$country)] # only one countr
 wdi$GDPpc <- wdi$NY.GDP.PCAP.PP.KD
 wdi$lGDPpc <- log(wdi$GDPpc)
 wdi <- subset(wdi, select=c(country, year, GDPpc, lGDPpc))
-names(wdi)[which(names(wdi)=="country")] <- "cname" # rename the variable
+names(wdi)[names(wdi) %in% "country"] <- "cname" # rename the variable
 wdi <- wdi[wdi$cname %in% evs$cname,] # select only those rows corresponding to countries in the EVS
 evs <- merge(evs, wdi, all.x=T)
 
