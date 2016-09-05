@@ -356,3 +356,28 @@ predict(store, newdata = expand.grid(disp=unique(mtcars$disp),
                                      type = "response")
 # expand.grid() is quite helpful here because it combines all possible
 # numbers, specifically what one wants when predicting for new data
+
+# next - control flow
+
+for (i in 1:20) {
+    next # Automatically jumps from 1 to 2, to 3, .., skiping anything that goes after
+    print(i)
+}
+
+for (i in 1:20) {
+    if (i %in% c(2,5,3)) {
+        next
+    } else {
+        print(i)
+    }
+}
+
+for (i in 1:20) {
+    for (x in 1:10) {
+        if (x %in% c(2,3,8) & i == 1) {
+            next
+        } else {
+            print(x)
+        }
+    }
+}
