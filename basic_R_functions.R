@@ -381,3 +381,41 @@ for (i in 1:20) {
         }
     }
 }
+
+# break
+df <- data.frame(a = sample(100), sample(5))
+
+for (i in 1:nrow(df)) {
+        for (j in 1:ncol(df)) {
+                if (df[i,j] != 5) {
+                        message("You're fine!")
+                        print(i)
+                } else {
+                        message("You're not!")
+                        print(i)
+                        print(j)
+                        break
+                        print("Did it break?")
+                }
+        }
+}
+
+# switch()
+switch("one", "second" = 1, "one" = 9)
+# Only accepts a vector of length 1 so this works better than recode when using a a sort of loop
+
+
+# replicate()
+# replicate takes any expressions (function call, vector, whatever, and repeats it N number of times)
+# I presume its usefulness is when the expressions will generate numbers randomly because repeating
+# the exact same results N times seems useless.
+
+# The expression generates 10 numbers, and replicate will replicate that 10 more times. 
+replicate(10, sapply(1:10, function(i) rnorm(1)))
+# One difference is that replicate will output a matrix when a length > 1 object is produced
+
+replicate(10, sapply(1, function(i) rnorm(1)))
+
+# When only one object is produced, replicate will return a vector. If you look at the source code
+# replicate is simply an sapply, evaluating an expression, with the simplify argument.
+
