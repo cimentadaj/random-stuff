@@ -46,14 +46,14 @@ par()$mfrow # check it's back
 # and closes the graphics device (always, regardless of whether or not
 # the plotting code worked).
 
-graphdv <- function(x, y, data) {
+graphdv <- function(path, x, y) {
     if (!is.numeric(x) || !is.numeric(y)) stop("both vars need to be numerics")
-    require("ggplot2", quietly = T)
-    on.exit(detach("package:ggplot2"))
-    qplot(x, y, data = data, geom = "point")
+    pdf(path)
+    on.exit(dev.off())
+    invisible(plot(x, y))
 }
 
-graphdv(mtcars$mpg, mtcars$hp, mtcars)
+graphdv("/Users/cimentadaj/Downloads/plot1.pdf", {z = rnorm(100)}, z^10)
 
 # 4.
 capture.output2 <- function(code) {
