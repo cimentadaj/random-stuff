@@ -7,15 +7,16 @@
 # Any pull requests are welcome!
 
 stargazer2 <- function(model, odd.ratio = F, ...) {
-  
-  stopifnot(class(model) == "list")
+  if (class(model) != "list") model <- list(model)
+
   if (odd.ratio) {
-    coefOR2 <- lapply(model, function(x) exp(coef(x)))
-    seOR2 <- lapply(model, function(x) exp(coef(x)) * se.coef(x))
-    p2 <- lapply(model, function(x) summary(x)$coefficients[, 4])
-    stargazer(model, coef = coefOR2, se = seOR2, p = p2, ...)
+    coefOR <- lapply(model, function(x) exp(coef(x)))
+    seOR <- lapply(model, function(x) exp(coef(x)) * summary(x)$coef[, 2])
+    p <- lapply(model, function(x) summary(x)$coef[, 4])
+    stargazer(model, coef = coefOR, se = seOR, p = p, ...)
     
   } else {
+    
     stargazer(model, ...)
   }
 }
