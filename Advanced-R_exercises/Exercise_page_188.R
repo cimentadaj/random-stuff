@@ -56,3 +56,13 @@ stopifnot(all.equal(m2(x), var(x) * 99 / 100))
 pick <- function(i) function(x) x[[i]]
 
 identical(lapply(mtcars, pick(5)), lapply(mtcars, function(x) x[[5]]))
+
+# The pick function is called on mtcars. This function first assigns 5 as the i argument and the next
+# function is returned. This function is now applied to each element of mtcars, with i being
+# called from the parent environment.
+
+# Test
+
+picker <- pick(5)
+lapply(mtcars, picker)
+
