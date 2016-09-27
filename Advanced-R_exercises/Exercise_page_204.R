@@ -1,64 +1,56 @@
-# Exercises 11.1.2, page 204
-
-1.
+ # 1.
 trims <- c(0, 0.1, 0.2, 0.5)
-x <- rcauchy(1000)
+x <- rcauchy(100)
 
-lapply(trims, function(trims) mean(x, trim = trims))
-lapply(trims, mean, x=x) # because the x here is refering to the vector named x and the loop is repeating the trims vector
-as the next argument
+lapply(trims, function(trim) mean(x, trim = trim))
+lapply(trims, mean, x = x) # Because trims is assigned to the next argument in mean
 
-2.
+# 2.
 scale01 <- function(x) {
-    rng <- range(x, na.rm=T)
-    (x - rng[1]) / (rng[2] - rng[1])
+  rng <- range(x, na.rm = TRUE)
+  (x - rng[1]) / (rng[2] - rng[1])
 }
-# To all columns
-mtcars[] <- lapply(mtcars, scale01)
 
-# To numeric columns
-n <- which(sapply(iris, is.numeric))
-iris[,n] <- lapply(iris[,n], scale01)
+lapply(mtcars, scale01) # Applied to every column of a data frame
 
-3.
+num <- sapply(iris, is.numeric)
+lapply(iris[num], scale01) # Only for numeric columns
+
+# 3.
+
 formulas <- list(
-    mpg ~ disp, # I deleted the two other formulas because they were throwing an error, even by themselves
-    mpg ~ disp + wt # try it yourself with: lm(mpg ~ I(1 / disp), data=mtcars)
+  mpg ~ disp,
+  mpg ~ I(1 / disp),
+  mpg ~ disp + wt,
+  mpg ~ I(1 / disp) + wt
 )
 
-# With a for loop
-for (i in 1:length(formulas)) {
-    print(lm(formulas[[i]], data=mtcars))
+models1 <- lapply(formulas, lm, data = mtcars)
+
+models2 <- vector("list", length(formulas))
+for (i in seq_along(formulas)) {
+  models2[[i]] <- lm(formulas[[i]], data = mtcars)
 }
 
-# With lapply
-(formul <- lapply(formulas,lm, data=mtcars))
+models1; models2
 
-4.
-# with lapply
-bootstraps <- lapply(1:1000, function(i) {
-    rows <- sample(1:nrow(mtcars), rep=T)
-    return(lm(mpg ~ disp, data=mtcars[rows, ]))
+# 4.
+
+bootstraps <- lapply(1:10, function(i) {
+  rows <- sample(1:nrow(mtcars), rep = TRUE)
+  mtcars[nrow, ]
 })
-# with for loop
-bootstraps2 <- vector("list", 1000)
-for (i in 1:1000) {
-    rows <- sample(1:nrow(mtcars), rep=T)
-    bootstraps2[[i]] <- lm(mpg ~ disp, data=mtcars[rows, ])
+
+bootstraps1 <- vector("list", 10)
+for (i in seq_along(bootstrp)) {
+  nrow <- sample(nrow(mtcars), rep = T)
+  bootstraps1[[i]] <- lm(mpg ~ disp, data = mtcars[nrow, ])
 }
 
+# Without anonymous function:
+bootstraps2 <- lapply(bootstraps, lm, formula = mpg ~ disp)
 
-# Without anonymous functions, can you do it?
-# With lapply you can't because lm is searching for a X input and lapply can't provide it(because its a sequence from 1:1000)
-lapply(1:1000, lm, formula = mpg ~ disp, data = mtcars[sample(1:nrow(mtcars), replace = T), ])
-
-# With a for loop you do can:
-for (i in 1:1000) {
-    print(lm(formula = mpg ~ disp, data=mtcars[sample(1:nrow(mtcars),replace=T),]))
-}
-
-
-5.
-r1 <- sapply(bootstraps, function(x) summary(x)$r.squared)
-
-r2 <- sapply(formula, function(x) summary(x)$r.squared)
+# 5.
+rsq <- function(mod) summary(mod)$r.squared
+m <- list(models1, models2, bootstraps1, bootstraps2)
+lapply(m, function(x) lapply(x, rsq))
