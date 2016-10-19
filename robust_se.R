@@ -1,4 +1,4 @@
-# This function estimates robust standad error for lm and glm and
+# This function estimates robust standad error for glm and
 # returns coefficients as either logit, odd ratios or probabilities.
 # logits are default
 
