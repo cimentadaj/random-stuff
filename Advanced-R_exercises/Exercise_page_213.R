@@ -33,6 +33,9 @@ sapply(trials, `[[`, 3)
 # the arguments naturally vary because it only takes the expression and the number
 # of times it is repeated.
 
+# In fact, we can replicate `replicate` doing this:
+p <- sapply(1:100, function(i) t.test(rpois(10, 10), rpois(10, 10)), simplify = F)
+
 # 5.
 
 # 6.
