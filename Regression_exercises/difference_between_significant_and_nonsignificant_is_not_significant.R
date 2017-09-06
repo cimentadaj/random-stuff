@@ -32,3 +32,11 @@ c(0.006293291,0.0012378070) - c(0.193099658 ,0.060608362)
 abs(-0.18680637) - 2 * -0.05937055 ## it is highly significant! the difference between disp and qsec is above 0 by .30
 ## if we compared that to the 0.004 difference between disp and hp then we can have confidence that qsec is indeed much
 ## more significantly different
+
+# A small function to compute the above:
+sig_vs_sig <- function(coef1, se1, coef2, se2) {
+  diff <- c(coef1, se1) - c(coef2, se2)
+  abs(diff[1]) - 2 * diff[2]
+}
+
+sig_vs_sig(0.006293291,0.0012378070, 0.193099658 ,0.060608362) # gives 0.30
