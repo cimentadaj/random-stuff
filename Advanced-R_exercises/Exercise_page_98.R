@@ -18,7 +18,8 @@
 # After loading ggplot2
 library(ggplot2)
 # you can unload it with the detach function
-detach("package:ggplot2")
+detach("package:ggplot2") # or
+unloadNamespace("ggplot2") # equally lenghty
 
 # How do you save and restore the settings of options() and par()?
 options() # is actually a list containing all settings
