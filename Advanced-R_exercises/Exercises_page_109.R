@@ -96,8 +96,9 @@ g <- function(x) {
   UseMethod("g")
 }
 g.numeric <- function(x) y # g.numeric is now the method g for the numeric class of g.
-g(10) # This will give a 2, because g will dispatch for g.numeric, but x wasn't evaluated, so g.numeric searches
-      # for the argument in the global environment.
+g(10) # This will give a 2, because g will dispatch for g.numeric, and g.numeric searches for y first in it's environment
+      # once it doesn't find it, it searches in the parent.env which is g, and finds it. In any case, it would've continued
+      # up to the Global env and then into packages.
 
 h <- function(x) {
   x <- 10
