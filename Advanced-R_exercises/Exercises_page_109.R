@@ -38,12 +38,28 @@ methods(Math)
 # The distinct methods are just making sure the object is suitable for the .Generic function.
 
 # 3.
-posixlt <- methods(class = "POSIXlt")
-posixct <- methods(class = "POSIXct")
+posixlt <- grep(".POSIXlt$", ls("package:base"), value = TRUE)
+posixct <- grep(".POSIXct$", ls("package:base"), value = TRUE)
 
-corresponding_posixct_functions <- sub('POSIXlt','POSIXct', posixlt)
+index_find <-
+  match(gsub(".POSIXlt", "", posixlt), gsub(".POSIXct", "", posixct), 0)
 
+common_posixct <- posixct[index_find]
+common_posixlt <- posixlt[index_find > 0]
 
+x <- mget(common_posixct, baseenv())
+y <- mget(common_posixlt, baseenv())
+
+matched_funs <- sapply(seq_along(x), function(i) {
+  # Check length of the bodies are the same
+  len_true <- length(as.character(body(x[[i]]))) == length(as.character(body(y[[i]])))
+  
+  # If both length of bodies are the same, then check equality between bodies
+  len_true && all(as.character(body(x[[i]])) == as.character(body(y[[i]])))
+})
+
+# Only print is the same!
+x[matched_funs]
 
 
 # 4.
