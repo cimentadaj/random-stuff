@@ -8,12 +8,11 @@ body(t); methods(t)
 methods(t.default)
 
 # What happens if you create an object with class t and use it with t()?
-x <- structure(5, class = 't') # t class object
-t(x) # return a matrix class t
+x <- structure(5, class = 'test') # test class object
+t(x) # runs t.test() which is not what is supposed to!
+
 methods(t)
-# t dispatches to t.data.frame
-t.data.frame
-# where the object is coerced to a matrix and then applied the next method which is t
+# t dispatches to t.test() which is not transpose but t.test()!
 
 # Alternatively
 pryr::ftype(t.test)
