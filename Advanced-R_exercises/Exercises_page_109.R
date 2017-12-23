@@ -76,6 +76,17 @@ base.generics <- Filter(is.generic, base.funs) # obtain which ones are generic
 num.methods <- sapply(names(base.generics),function(x) length(methods(x))) # length of each one
 num.methods[which.max(num.methods)] # which one is the higher
 
+  # or
+                      
+pkgs <- ls("package:base")
+
+is_funs <- sapply(pkgs, function(x) is.function(get(x, envir = baseenv())) && pryr::is_s3_generic(x))
+all_methods <- sapply(pkgs[is_funs], function(x) length(as.character(methods(x))))
+
+all_methods[which.max(all_methods)]
+
+                      
+                      
 # | is the functions with the highest number of methods
 
 # 5.
