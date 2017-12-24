@@ -23,6 +23,19 @@ number_class_methods[which.max(number_class_methods)]
 # ANY 
 # 160 
 
+# 24/12/2017
+
+# Get all functions in the global env
+all_funs <- mget(unlist(sapply(search(), ls)), inherits = TRUE)
+
+# Filter only those which are functions and S4
+all_funss4 <- Filter(function(x) is.function(x) && isS4(x), all_funs)
+
+# Get their methods and take the length
+lengthy_s4 <- sapply(names(all_funss4), function(x) length(as.character(methods(x))))
+
+# Subset the lengthiest one and that's coerce!
+names(all_funss4)[which.max(lengthy_s4)]
 
 # 2.
 
