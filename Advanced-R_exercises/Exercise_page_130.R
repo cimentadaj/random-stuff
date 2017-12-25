@@ -45,3 +45,17 @@ while (!identical(new_env, emptyenv())) {
   nam <- c(nam, environmentName(new_env))  
 }
 nam # These are all the parent frames of .GlobalEnv, with the exception of R_GlobalEnv
+
+my_search <- function() {
+  env <- .GlobalEnv
+  env_show <- environmentName(env)
+  
+  while (!identical(env, emptyenv())) {
+    env <- parent.env(env)
+    env_show <- c(env_show, environmentName(env))
+  }
+  
+  env_show
+}
+
+my_search()
