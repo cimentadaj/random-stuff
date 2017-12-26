@@ -28,6 +28,13 @@ f1(1)
 # The enclosing environment of f3 is f2. When f3 is called, it will look for x1 and x2 in f2, it will find
 # x2, and then it will continue searching for x1 in f1, and when it finds it, it prints the result.
 
+# 26/12/2017
+
+# The calls are executed this way: f1 is called with x1 = 1, f1 then defines f2 and calls f2 with x2 = 2
+# f2 defines f3 and calls f3 with x3 = 3. f3 searches for x3 and finds it in the execution environment.
+# Then looks for x2 and doesn't find it. Goes up to the parent environment and finds it. It then repeats
+# for x1 and finds it in the grandparent environment.
+
 # 3.
 
 # 4.
