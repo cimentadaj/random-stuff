@@ -33,6 +33,18 @@ assign2 <- function(var, value, env = parent.frame()) {
 assign2("x", 1:5)
 assign2("x", 2)
 
+# 26/12/2017
+
+assign2 <- function(name, value, env = parent.frame()) {
+  if (identical(env, emptyenv())) {
+    stop("Can't find ", name)
+  } else if (exists(name, env = env, inherits = FALSE)) {
+    env[[name]] <- value
+  } else {
+    assign2(name, value, parent.env(env))
+  }
+}
+
 # 3.
 
 binder <- function(var, value, env = parent.frame(), active = T, locked = F) {
