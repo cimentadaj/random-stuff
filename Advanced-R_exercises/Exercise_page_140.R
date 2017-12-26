@@ -54,3 +54,18 @@ str2 <- function(fun) {
 str2(sd)
 str2(print)
 str2(summary)
+
+# 26/12/2017
+# I'm 100% sure that the defined environment is environment() but I'm not sure that parent.frame()
+# is the environment where it was called from.
+
+str.function <- function(fun) {
+  arguments <- capture.output(args(fun))
+  env_def <- capture.output(environment(fun))
+  env_call <- capture.output(parent.frame())
+  
+  cat(arguments, "\n",
+      env_def, "\n",
+      env_call)
+}
+
