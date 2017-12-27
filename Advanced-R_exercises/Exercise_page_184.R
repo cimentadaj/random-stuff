@@ -15,6 +15,17 @@ finder <- function(funs, env = parent.frame()) {
 finder(xtabs)
 finder(mean)
 finder(sd)
+ 
+ # 27/12/2017
+ fget <- function(FUN) {
+  fun_names <- mget(unlist(lapply(search(), ls)), inherits = TRUE)
+  fun_names <- Filter(is.function, fun_names)
+  
+  matched <- match(FUN, names(fun_names), 0) > 0
+  
+  if (matched) fun_names[[FUN]] else stop(FUN, " not found!")
+}
+
 
 # Functions are anonymous in R and are not bound to any particular name.
 # There is also the problem that if the function has another name, it will find the first name that appears
