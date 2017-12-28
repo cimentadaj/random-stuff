@@ -130,3 +130,27 @@ map_vapply(sd = 100, n = 5, 2, FUN = rnorm, FUN.VALUE = numeric(5))
 
 # can use anonymous function
 map_vapply(rnorm(1e03), rnorm(1e03), rnorm(1e03), FUN = function(x, y, z) x + y + z, FUN.VALUE = numeric(1))
+
+# 7
+           
+           
+mcsapply <- function(X, FUN, ..., simplify = TRUE, USE.NAMES = TRUE) {
+  FUN <- match.fun(FUN)
+  
+  result <- parallel::mclapply(X = X, FUN = FUN, ... = ...)
+  
+  if (USE.NAMES && is.character(X) && is.null(names(result))) {
+    names(result) <- X
+  }
+
+  if (!identical(simplify, FALSE) && length(result)) {
+    simplify2array(result, higher = (simplify == "array"))
+  } else {
+    answer
+  }
+}
+
+microbenchmark::microbenchmark(
+  mc = mcsapply(1:1e6, log),
+  classic = sapply(1:1e6, log)
+)
