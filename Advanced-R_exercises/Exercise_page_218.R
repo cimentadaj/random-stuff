@@ -23,3 +23,15 @@ apply(mtcars, 1, function(x) numeric())
 apply(mtcars, 2, unique)
 
 #2
+
+split_vapply <- function(num, fac, FUN, FUN.VALUE, ...) {
+  split_df <- split(num, fac)
+  vapply(split_df, FUN = FUN, FUN.VALUE = FUN.VALUE)
+}
+
+split_vapply(mtcars$disp, mtcars$cyl, mean, numeric(1))
+
+# split + vapply makes sense partially.
+# the whole point of tapply (split + lapply) is getting summary by groups.
+# for example, a table for different groups. This leads to different lengths
+# inevitably. But for other operations like group means, split + vapply makes sense
