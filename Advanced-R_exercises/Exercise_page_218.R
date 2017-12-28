@@ -35,3 +35,20 @@ split_vapply(mtcars$disp, mtcars$cyl, mean, numeric(1))
 # the whole point of tapply (split + lapply) is getting summary by groups.
 # for example, a table for different groups. This leads to different lengths
 # inevitably. But for other operations like group means, split + vapply makes sense
+
+#3 
+ 
+my_split <- function(num, f, drop = FALSE) {
+  uni_f <- as.character(sort(unique(f)))
+  splitted <- lapply(setNames(uni_f, uni_f), function(ind) num[f == ind])
+  
+  # drop null factors
+  if (drop) splitted <- Filter(Negate(is.null), splitted)
+  
+  splitted
+}
+n <- 10; nn <- 100
+g <- factor(round(n * runif(n * nn)))
+x <- rnorm(n * nn) + sqrt(as.numeric(g))
+
+ all(Map(function(x, y) all(x == y), my_split(x, g), split(x, g)))
