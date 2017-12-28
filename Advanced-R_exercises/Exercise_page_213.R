@@ -37,6 +37,22 @@ sapply(trials, `[[`, 3)
 p <- sapply(1:100, function(i) t.test(rpois(10, 10), rpois(10, 10)), simplify = F)
 
 # 5.
+# I'm not sure I understand this question entirely but here's an approach seen from here:
+# https://github.com/peterhurford/adv-r-book-solutions/blob/master/09_functionals/02_friends_of_lapply/exercise5.r
+            
+lapply2 <- function(X, names, FUN, ...) {
+  stopifnot(length(X) == length(names))
+  out <- vector("list", length(X))
+  
+  for (i in seq_along(X)) {
+    out[[i]] <- FUN(X[[i]], ...)
+  }
+  
+  names(out) <- names
+  out
+}
+
+lapply2(list(1:10, 20:20), c("hey", "ho"),mean)            
 
 # 6.
 
