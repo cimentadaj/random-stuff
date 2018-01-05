@@ -98,3 +98,7 @@ row_max <- function(df) {
 }
 
 row_max(mtcars)
+         
+# 2
+         
+# 3
